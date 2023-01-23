@@ -76,7 +76,7 @@
           >
             <input
               type="checkbox"
-              @change="addItem('checkbox' + n)"
+              @change="addItem(`checkbox${item.id}`)"
               :id="`checkbox${item.id}`"
               class="checkbox checkbox-info ring-1 rounded-full"
             />
@@ -120,7 +120,7 @@ export default {
   components: { Skeletor },
   data() {
     return {
-      chechedInputs: 0,
+      chechedInputs: [],
       fetching: false,
       allTests: [],
     };
@@ -141,9 +141,9 @@ export default {
     },
     addAllItems() {},
     addItem(index) {
-      let id = index.replace("checkbox", "");
-      console.log(index);
       let isTrue = document.getElementById(index).checked;
+      let id = index.replace("checkbox", "");
+
       if (isTrue) {
         this.chechedInputs += 1;
       } else {
