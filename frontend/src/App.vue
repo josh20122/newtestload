@@ -18,7 +18,7 @@ export default {
   watch: {
     $route() {
       this.setToken();
-      // this.authMiddleware();
+      this.authMiddleware();
     },
   },
   methods: {
