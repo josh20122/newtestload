@@ -45,7 +45,9 @@
       </v-toolbar-title>
     </VToolbar>
     <delete-test-modal
+      @delete="$emit('delete')"
       :show="showDeleteModal"
+      :deleteItems="deleteItems"
       @close="showDeleteModal = false"
     ></delete-test-modal>
   </div>
@@ -56,7 +58,7 @@ import DeleteTestModal from "./DeleteTestModal.vue";
 
 export default {
   components: { DeleteTestModal },
-  props: ["showDeleteButton"],
+  props: ["showDeleteButton", "deleteItems"],
   data() {
     return {
       showDeleteModal: false,
@@ -71,6 +73,3 @@ export default {
   },
 };
 </script>
-
-<style>
-</style>

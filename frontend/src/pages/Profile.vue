@@ -206,8 +206,10 @@ export default {
           }
         )
         .then((response) => {
-          this.getUser();
-        });
+          this.user.img = response.data.file_path;
+          // this.getUser();
+        })
+        .catch((errors) => {});
     },
   },
   watch: {

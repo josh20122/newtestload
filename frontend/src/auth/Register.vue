@@ -50,91 +50,70 @@
                 tracking-tight
                 text-gray-900
                 md:text-2xl
+                pb-2
                 dark:text-white
               "
             >
               Create an account
             </h1>
 
-            <div>
-              <label for="">Username</label>
-
-              <v-text-field
+            <FormKit
+              #default="{ value, state: { valid } }"
+              type="form"
+              @submit="submit"
+              v-model="form"
+              id="registration-example"
+              :actions="false"
+            >
+              <FormKit
+                type="text"
                 name="username"
-                outline
-                v-model="form.username"
-                density="comfortable"
-                :error-messages="errors.username"
-                variant="outlined"
-                :rules="validate(rules.required)"
-                persistent-placeholder
-                placeholder="Enter your username"
-              ></v-text-field>
-            </div>
-            <div>
-              <label for="">Email</label>
-              <v-text-field
-                name="email"
-                outline
-                v-model="form.email"
-                density="comfortable"
-                :error-messages="errors.email"
-                variant="outlined"
-                :rules="validate(rules.required, rules.email)"
-                persistent-placeholder
-                placeholder="Enter your email name"
-              ></v-text-field>
-            </div>
+                placeholder="jane"
+                label="Your username"
+                help="What is your preferred username"
+                validation="required"
+              />
+              <div class="text-xs text-red-600">{{ errors.username }}</div>
 
-            <div>
-              <label for="">Password</label>
-              <v-text-field
-                name="name"
-                outline
-                v-model="form.password"
-                density="comfortable"
-                variant="outlined"
-                :error-messages="errors.password"
-                persistent-placeholder
-                placeholder="Enter your password"
-              ></v-text-field>
-            </div>
-            <div>
-              <label for="">Password confirmation</label>
-              <v-text-field
-                name="name"
-                outline
-                v-model="form.password_confirmation"
-                :rules="validate(rules.required, rules.passwordConfirmation)"
-                density="comfortable"
-                :error-messages="errors.password_confirmation"
-                variant="outlined"
-                persistent-placeholder
-                placeholder="Confirm password"
-              ></v-text-field>
-            </div>
-            <div>
-              <button
-                type="submit"
-                @click="submit()"
-                class="
-                  w-full
-                  mt-6
-                  text-white
-                  bg-blue-500
-                  hover:bg-blue-400
-                  focus:ring-4 focus:outline-none focus:ring-primary-300
-                  font-medium
-                  rounded-lg
-                  text-sm
-                  px-5
-                  py-2.5
-                  text-center
-                "
-              >
-                Create an account
-              </button>
-            </div>
+              <FormKit
+                type="text"
+                name="email"
+                label="Your email"
+                placeholder="jane@example.com"
+                help="What email should we use?"
+                validation="required|email"
+              />
+              <div class="text-xs text-red-600">{{ errors.email }}</div>
+
+              <div class="double">
+                <FormKit
+                  type="password"
+                  name="password"
+                  label="Password"
+                  validation="required|length:6|matches:/[^a-zA-Z]/"
+                  :validation-messages="{
+                    matches: 'Please include at least one symbol',
+                  }"
+                  placeholder="Your password"
+                  help="Choose a password"
+                />
+                <FormKit
+                  type="password"
+                  name="password_confirm"
+                  label="Confirm password"
+                  placeholder="Confirm password"
+                  validation="required|confirm"
+                  :error="isTaken ? 'That username is already taken' : null"
+                  help="Confirm your password"
+                  validation-name="Taco quantity"
+                />
+              </div>
+              <div>
+                <button :disabled="!valid" class="btn bg-blue-600 w-full">
+                  Register
+                </button>
+              </div>
+            </FormKit>
           </div>
         </div>
       </div>
@@ -147,43 +126,35 @@ import axios from "axios";
 export default {
   data() {
     return {
-      valid: false,
+      isTaken: true,
       errors: {},
-      rules: {
-        email: (v) =>
-          !v ||
-          /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) ||
-          "Invalid email address",
-        required: (v) => !!v || "This field is required",
-        passwordConfirmation: (v) =>
-          v === this.form.password || "Password does not match",
-        length10: (v) =>
-          v.length <= 10 || "Name must be less than 10 characters",
-      },
+      rules: [
+        (value) => {
+          if (value) return true;
+          return "You must enter a first name.";
+        },
+      ],
+
       firstname: null,
-      form: {
-        username: null,
-        email: null,
-        password_confirmation: null,
-        password: null,
-      },
+      form: {},
     };
   },
-  methods: {
-    validate(rule1, rule2, rule3, rule4) {
-      var rules = [];
-      rules.push(rule1, rule2, rule3, rule4);
-      return rules;
+  watch: {
+    valid(value) {
+      console.log(value);
     },
+  },
+  methods: {
     setErrors(errors) {
       this.errors = errors;
       return true;
     },
 
-    submit() {
-      var here = this;
+    submit(form) {
+      console.log(form);
+      form.password_confirmation = form.password_confirm;
       axios
-        .post("/register", this.form)
+        .post("/register", form)
         .then((response) => {
           localStorage.setItem("token", response.data.token);
           localStorage.setItem("user", response.data.user);

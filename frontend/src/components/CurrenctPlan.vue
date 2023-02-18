@@ -113,7 +113,7 @@ export default {
   components: { Skeletor },
   data() {
     return {
-      fetching: true,
+      fetching: false,
     };
   },
 };

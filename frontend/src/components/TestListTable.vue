@@ -29,6 +29,7 @@
             <input
               type="checkbox"
               id="testInput"
+              @change="addAllItems()"
               class="
                 checkbox checkbox-info
                 ring-1
@@ -118,6 +119,7 @@ import { Skeletor } from "vue-skeletor";
 import axios from "axios";
 export default {
   components: { Skeletor },
+  props: ["deleteNow"],
   data() {
     return {
       chechedInputs: [],
@@ -125,32 +127,66 @@ export default {
       allTests: [],
     };
   },
+  watch: {
+    deleteNow(newValue) {
+      if (newValue === true) {
+        this.getTests();
+      }
+    },
+  },
   mounted() {
     this.getTests();
   },
   methods: {
+    emit() {
+      this.$emit("addDeleteItem", this.chechedInputs);
+    },
     getTests() {
+      this.fetching = true;
       axios
         .post("/test-overview")
         .then((response) => {
           this.allTests = response.data;
+          this.fetching = false;
         })
         .catch((errors) => {
           this.$router.push("/login");
+          this.fetching = false;
         });
     },
-    addAllItems() {},
-    addItem(index) {
-      let isTrue = document.getElementById(index).checked;
-      let id = index.replace("checkbox", "");
+    addAllItems() {
+      var allInputs = document.querySelectorAll('[id^="checkbox"]');
+      for (let x = 0; x < allInputs.length; x++) {
+        this.addItem(allInputs[x].id, true);
+      }
+    },
+    addItem(checkboxId, global) {
+      let isTrue = document.getElementById(checkboxId).checked;
+      let id = parseInt(checkboxId.replace("checkbox", ""));
 
-      if (isTrue) {
-        this.chechedInputs += 1;
-      } else {
-        this.chechedInputs -= 1;
+      if (global == true) {
+        if (isTrue === false) {
+          document.getElementById(checkboxId).checked = true;
+          this.chechedInputs.push(id);
+        } else {
+          document.getElementById(checkboxId).checked = false;
+          let index = this.chechedInputs.indexOf(id);
+          this.chechedInputs.splice(index, 1);
+        }
+        this.emit();
+        return true;
       }
 
-      this.$emit("check", this.chechedInputs);
+      if (isTrue === true) {
+        document.getElementById(checkboxId).checked = true;
+        this.chechedInputs.push(id);
+      } else {
+        document.getElementById(checkboxId).checked = false;
+        let index = this.chechedInputs.indexOf(id);
+        this.chechedInputs.splice(index, 1);
+      }
+      this.emit();
+      return true;
     },
   },
 };

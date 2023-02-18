@@ -32,7 +32,7 @@
                 </v-btn>
               </div>
               <div>
-                <v-btn flat color="" class="bg-secondaryBg w-fit" block @click="modal=false"
+                <v-btn flat color="" class="bg-secondaryBg w-fit" block @click="    deteteTests()"
                 >
                 <div class="normal-case font-normal">
                   Delete test
@@ -49,8 +49,9 @@
  </template>
  
  <script>
+import axios from "axios";
 export default {
-  props: ["show"],
+  props: ["show", "deleteItems"],
   data() {
     return {
       modal: this.show,
@@ -67,6 +68,17 @@ export default {
     },
   },
   methods: {
+    deteteTests() {
+      axios
+        .post("/delete-test", { id: this.deleteItems })
+        .then((response) => {
+          this.$emit("delete");
+          this.closeModal();
+        })
+        .catch((errors) => {
+          this.closeModal();
+        });
+    },
     closeModal() {
       this.$emit("close");
     },

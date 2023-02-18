@@ -18,7 +18,7 @@ export default {
   watch: {
     $route() {
       this.setToken();
-      this.authMiddleware();
+      // this.authMiddleware();
     },
   },
   methods: {
@@ -31,6 +31,7 @@ export default {
     setToken() {
       let AUTH_TOKEN = "Bearer " + localStorage.getItem("token");
       axios.defaults.headers.common["Authorization"] = AUTH_TOKEN;
+      axios.defaults.headers.common["Access-Control-Allow-Origin"] = "*";
     },
     authMiddleware() {
       this.setToken();
@@ -48,6 +49,7 @@ export default {
   },
   mounted() {
     this.setToken();
+    axios.defaults.withCredentials = true;
     axios.defaults.baseURL = "http://localhost:5000";
     // this.authMiddleware();
 

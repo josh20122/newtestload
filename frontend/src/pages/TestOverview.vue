@@ -2,10 +2,15 @@
   <user-navigation>
     <template #test-manager-nav>
       <all-tests-nav-bar
+        @delete="deleted = true"
         :showDeleteButton="checkCount > 0 ? true : false"
+        :deleteItems="deleteItems"
       ></all-tests-nav-bar>
     </template>
-    <test-list-table @check="checked"></test-list-table>
+    <test-list-table
+      :delete-now="deleted"
+      @addDeleteItem="setDeleteItems"
+    ></test-list-table>
   </user-navigation>
 </template>
 
@@ -17,6 +22,8 @@ export default {
   data() {
     return {
       checkCount: 0,
+      deleted: false,
+      deleteItems: [],
     };
   },
   components: {
@@ -25,8 +32,13 @@ export default {
     TestListTable,
   },
   methods: {
-    checked(count) {
-      this.checkCount = count;
+    setDelete() {
+      this.deleted = true;
+      this.deleted = false;
+    },
+    setDeleteItems(items) {
+      this.checkCount = items.length;
+      this.deleteItems = items;
     },
   },
 };

@@ -41,7 +41,12 @@
       <v-avatar color="blue" size="large">
         <span class="text-h5">JN</span>
       </v-avatar>
-      <span class="font-semibold"> Hello, Jonathan</span>
+      <span class="font-semibold">
+        Hello,
+        <span v-if="user.user" class="capitalize">
+          {{ user.user.username }}
+        </span>
+      </span>
     </v-toolbar-title>
 
     <v-btn @click="showAddTestModal = true" color="" class="bg-secondaryBg">
@@ -51,7 +56,6 @@
   </v-app-bar>
   <div class="bg-primaryBg w-full h-full">
     <slot name="test-manager-nav" />
-
     <div class="md:px-10 md:pt-4">
       <div class="p-2 pb-8">
         <slot></slot>
@@ -65,6 +69,7 @@
 </template>
 
 <script>
+import axios from "axios";
 import AddTestModal from "./AddTestModal.vue";
 export default {
   components: {
@@ -74,6 +79,7 @@ export default {
     return {
       showAddTestModal: false,
       drawer: false,
+      user: {},
       items: [
         { text: "Test Overview", icon: "mdi-poll", path: "/test-overview" },
         {
@@ -90,13 +96,19 @@ export default {
       ],
     };
   },
+  methods: {
+    getUser() {
+      axios.post("/user").then((response) => {
+        this.user = response.data;
+      });
+    },
+  },
   mounted() {
+    this.getUser();
+
     if (window.innerWidth > 500) {
       this.drawer = true;
     }
   },
 };
 </script>
-
-<style>
-</style>
