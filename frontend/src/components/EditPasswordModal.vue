@@ -101,9 +101,15 @@ export default {
   },
   methods: {
     submit() {
-      axios.post("/password-change", this.form).catch((errors) => {
-        this.errors = errors.response.data;
-      });
+      axios
+        .post("/password-change", this.form)
+        .then((response) => {
+          this.$emit("reload");
+          this.modal = false;
+        })
+        .catch((errors) => {
+          this.errors = errors.response.data;
+        });
     },
     closeModal() {
       this.$emit("close");

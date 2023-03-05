@@ -134,18 +134,22 @@ export default {
       }
     },
   },
-
   mounted() {},
-
   methods: {
     submit() {
-      axios.post("/email-change", this.form).catch((errors) => {
-        if (errors.response.status === 302) {
-          this.errors = errors.response.data;
-        } else {
-          this.$router.push("/login");
-        }
-      });
+      axios
+        .post("/email-change", this.form)
+        .then((response) => {
+          this.$emit("reload");
+          this.modal = false;
+        })
+        .catch((errors) => {
+          if (errors.response.status === 302) {
+            this.errors = errors.response.data;
+          } else {
+            this.$router.push("/login");
+          }
+        });
     },
     validate(rule1, rule2, rule3, rule4) {
       var rules = [];
@@ -158,6 +162,3 @@ export default {
   },
 };
 </script>
-
-<style>
-</style>

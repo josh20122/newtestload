@@ -5,13 +5,7 @@
       <v-divider></v-divider>
       <v-card-text>
         <div
-          class="
-            py-2
-            inline-flex
-            md:justify-start md:gap-x-16
-            justify-between
-            w-full
-          "
+          class="py-2 inline-flex md:justify-start md:gap-x-16 justify-between w-full"
         >
           <div class="md:basis-3/12">
             <Skeletor width="200" pill height="22" v-if="fetching" />
@@ -37,13 +31,7 @@
       <v-divider></v-divider>
       <v-card-text>
         <div
-          class="
-            py-2
-            inline-flex
-            md:justify-start md:gap-x-16
-            justify-between
-            w-full
-          "
+          class="py-2 inline-flex md:justify-start md:gap-x-16 justify-between w-full"
         >
           <div class="md:basis-3/12">
             <Skeletor width="200" pill height="22" v-if="fetching" />
@@ -69,13 +57,7 @@
       <v-divider></v-divider>
       <v-card-text>
         <div
-          class="
-            py-2
-            inline-flex
-            md:justify-start md:gap-x-16
-            justify-between
-            w-full
-          "
+          class="py-2 inline-flex md:justify-start md:gap-x-16 justify-between w-full"
         >
           <div class="md:basis-3/12">
             <Skeletor width="200" pill height="22" v-if="fetching" />
@@ -96,8 +78,10 @@
     <edit-password-modal
       @close="passwordModal = false"
       :show="passwordModal"
+      @reload="getProfile()"
     ></edit-password-modal>
     <edit-email-modal
+      @reload="getProfile()"
       @close="emailDialog = false"
       :user="user"
       :show="emailDialog"
@@ -129,7 +113,6 @@ export default {
       axios
         .post("/user")
         .then((response) => {
-          console.log(response.data);
           this.user = response.data.user;
           this.fetching = false;
         })
